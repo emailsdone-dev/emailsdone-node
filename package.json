@@ -1,6 +1,6 @@
 {
   "name": "emailsdone",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "Template-first transactional email SDK for EmailsDone.",
   "type": "module",
   "main": "./EmailsDone/dist/index.js",
@@ -17,6 +17,7 @@
     "LICENSE"
   ],
   "scripts": {
+    "prepack": "npm run build",
     "build": "tsc -p tsconfig.json"
   },
   "engines": {
@@ -26,13 +27,25 @@
     "emailsdone",
     "email",
     "transactional-email",
-    "sdk"
+    "transactional",
+    "email-sdk",
+    "password-reset",
+    "verification-email",
+    "notification-email",
+    "ses"
   ],
   "author": "EmailsDone",
+  "license": "MIT",
   "homepage": "https://emailsdone.dev/docs/libraries/node/",
   "repository": {
     "type": "git",
-    "url": "https://emailsdone.dev"
+    "url": "git+https://github.com/emailsdone-dev/emailsdone-node.git"
+  },
+  "bugs": {
+    "url": "https://github.com/emailsdone-dev/emailsdone-node/issues"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "devDependencies": {
     "typescript": "^5.5.0"

@@ -8,7 +8,7 @@ import {
   RecipientClient,
 } from "./templates.js";
 import type {
-  EmailsDoneClientOptions,
+  EmailsDoneOptions,
   GetQuotaResponse,
   GetRecipientStatusOptions,
   GetRecipientStatusResponse,
@@ -18,7 +18,7 @@ import type {
   SendTemplatePayload,
 } from "./types.js";
 
-export class EmailsDoneClient {
+export class EmailsDone {
   private readonly authenticationTemplates: AuthenticationTemplates;
   private readonly billingTemplates: BillingTemplates;
   private readonly developerTemplates: DeveloperTemplates;
@@ -27,7 +27,7 @@ export class EmailsDoneClient {
   private readonly apiKey: string;
   private readonly apiBaseUrl: string;
 
-  constructor(options: EmailsDoneClientOptions) {
+  constructor(options: EmailsDoneOptions) {
     if (!options.apiKey || !options.apiKey.trim()) {
       throw new Error("An EmailsDone API key is required. Store it in server-side configuration, not frontend code.");
     }
@@ -41,8 +41,8 @@ export class EmailsDoneClient {
     this.teamTemplates = new TeamTemplates(this);
   }
 
-  static fromApiKey(apiKey: string, options: Omit<EmailsDoneClientOptions, "apiKey"> = {}): EmailsDoneClient {
-    return new EmailsDoneClient({ ...options, apiKey });
+  static fromApiKey(apiKey: string, options: Omit<EmailsDoneOptions, "apiKey"> = {}): EmailsDone {
+    return new EmailsDone({ ...options, apiKey });
   }
 
   authentication(): AuthenticationTemplates {
@@ -152,6 +152,8 @@ export class EmailsDoneClient {
     }
   }
 }
+
+export const EmailsDoneClient = EmailsDone;
 
 function addIfSet(target: Record<string, unknown>, key: string, value: string | undefined): void {
   if (value?.trim()) {

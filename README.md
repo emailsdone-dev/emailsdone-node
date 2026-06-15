@@ -37,9 +37,9 @@ Do not put this key in browser JavaScript, mobile apps, public frontend configur
 ## Send an email
 
 ```ts
-import { EmailsDoneClient } from "emailsdone";
+import { EmailsDone } from "emailsdone";
 
-const emailsDone = EmailsDoneClient.fromApiKey(process.env.EMAILSDONE_API_KEY!);
+const emailsDone = EmailsDone.fromApiKey(process.env.EMAILSDONE_API_KEY!);
 
 await emailsDone.authentication().welcome("https://app.example.com/action").send("user@example.com");
 ```

@@ -1,4 +1,4 @@
-export { EmailsDoneClient } from "./client.js";
+export { EmailsDone, EmailsDone as EmailsDoneClient } from "./client.js";
 export { EmailsDoneError } from "./errors.js";
 export {
   AuthenticationTemplates,
@@ -11,6 +11,7 @@ export {
 } from "./templates.js";
 export type {
   EmailsDoneClientOptions,
+  EmailsDoneOptions,
   GetQuotaResponse,
   GetRecipientStatusOptions,
   GetRecipientStatusResponse,

@@ -1,4 +1,4 @@
-import type { EmailsDoneClient, SendEmailResponse } from "../../EmailsDone/dist/index.js";
+import type { EmailsDone, SendEmailResponse } from "../../EmailsDone/dist/index.js";
 
 export interface DemoParameter {
   key: string;
@@ -9,7 +9,7 @@ export interface DemoTemplate {
   groupName: string;
   templateName: string;
   parameters: DemoParameter[];
-  executeAsync: (emailsDone: EmailsDoneClient, values: Record<string, string>) => Promise<SendEmailResponse>;
+  executeAsync: (emailsDone: EmailsDone, values: Record<string, string>) => Promise<SendEmailResponse>;
 }
 
 export const demoTemplateRegistry: DemoTemplate[] = [

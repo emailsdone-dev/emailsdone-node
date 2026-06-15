@@ -1,7 +1,9 @@
-export interface EmailsDoneClientOptions {
+export interface EmailsDoneOptions {
   apiKey: string;
   apiBaseUrl?: string;
 }
+
+export type EmailsDoneClientOptions = EmailsDoneOptions;
 
 export interface GetRecipientStatusOptions {
   limit?: number | undefined;

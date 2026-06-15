@@ -5,3 +5,5 @@ Examples/node_modules/
 Examples/package-lock.json
 EmailsDone/node_modules/
 *.tsbuildinfo
+node_modules/
+package-lock.json

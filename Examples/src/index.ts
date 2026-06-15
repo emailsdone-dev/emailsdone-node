@@ -1,6 +1,6 @@
 import { createInterface } from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
-import { EmailsDoneClient } from "../../EmailsDone/dist/index.js";
+import { EmailsDone } from "../../EmailsDone/dist/index.js";
 import { demoTemplateRegistry } from "./demoTemplateRegistry.js";
 
 async function main(): Promise<void> {
@@ -11,7 +11,7 @@ async function main(): Promise<void> {
     console.log("");
 
     const apiKey = await promptForApiKey(readline);
-    const emailsDone = EmailsDoneClient.fromApiKey(apiKey);
+    const emailsDone = EmailsDone.fromApiKey(apiKey);
 
     try {
       const quota = await emailsDone.getQuota();
@@ -68,7 +68,7 @@ async function promptForApiKey(readline: ReturnType<typeof createInterface>): Pr
 
 async function sendTemplateMenu(
   readline: ReturnType<typeof createInterface>,
-  emailsDone: EmailsDoneClient,
+  emailsDone: EmailsDone,
 ): Promise<void> {
   const groups = Array.from(new Set(demoTemplateRegistry.map((template) => template.groupName)))
     .sort((a, b) => a.localeCompare(b));
@@ -118,7 +118,7 @@ async function sendTemplateMenu(
 
 async function recipientStatusMenu(
   readline: ReturnType<typeof createInterface>,
-  emailsDone: EmailsDoneClient,
+  emailsDone: EmailsDone,
 ): Promise<void> {
   console.log("");
   const email = await promptForValue(readline, "Recipient email");

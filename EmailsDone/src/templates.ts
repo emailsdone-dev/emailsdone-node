@@ -1,4 +1,4 @@
-import type { EmailsDoneClient } from "./client.js";
+import type { EmailsDone } from "./client.js";
 import type {
   GetRecipientStatusOptions,
   GetRecipientStatusResponse,
@@ -61,7 +61,7 @@ import type {
 
 export class PendingTemplateRequest {
   constructor(
-    private readonly client: EmailsDoneClient,
+    private readonly client: EmailsDone,
     private readonly payload: SendTemplatePayload,
   ) {}
 
@@ -80,7 +80,7 @@ export class PendingTemplateRequest {
 
 export class RecipientClient {
   constructor(
-    private readonly client: EmailsDoneClient,
+    private readonly client: EmailsDone,
     private readonly email: string,
   ) {}
 
@@ -94,7 +94,7 @@ export class RecipientClient {
 }
 
 export class AuthenticationTemplates {
-  constructor(private readonly client: EmailsDoneClient) {}
+  constructor(private readonly client: EmailsDone) {}
 
   accountLocked(options: AccountLockedOptions = {}): PendingTemplateRequest {
     const data: Record<string, unknown> = {};
@@ -272,7 +272,7 @@ export class AuthenticationTemplates {
 }
 
 export class BillingTemplates {
-  constructor(private readonly client: EmailsDoneClient) {}
+  constructor(private readonly client: EmailsDone) {}
 
   invoice(options: InvoiceOptions): PendingTemplateRequest {
     requireValue("invoice", options.invoice);
@@ -442,7 +442,7 @@ export class BillingTemplates {
 }
 
 export class DeveloperTemplates {
-  constructor(private readonly client: EmailsDoneClient) {}
+  constructor(private readonly client: EmailsDone) {}
 
   apiKeyCreated(options: ApiKeyCreatedOptions = {}): PendingTemplateRequest {
     const data: Record<string, unknown> = {};
@@ -500,7 +500,7 @@ export class DeveloperTemplates {
 }
 
 export class NotificationsTemplates {
-  constructor(private readonly client: EmailsDoneClient) {}
+  constructor(private readonly client: EmailsDone) {}
 
   announcement(options: AnnouncementOptions): PendingTemplateRequest {
     requireValue("message", options.message);
@@ -750,7 +750,7 @@ export class NotificationsTemplates {
 }
 
 export class TeamTemplates {
-  constructor(private readonly client: EmailsDoneClient) {}
+  constructor(private readonly client: EmailsDone) {}
 
   invitationAccepted(options: InvitationAcceptedOptions = {}): PendingTemplateRequest {
     const data: Record<string, unknown> = {};
@@ -859,7 +859,7 @@ function requireValue(name: string, value: unknown): void {
 }
 
 function buildPendingRequest(
-  client: EmailsDoneClient,
+  client: EmailsDone,
   templateId: string,
   templateVersion: string,
   data: Record<string, unknown>,
