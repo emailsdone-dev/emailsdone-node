@@ -1,0 +1,7 @@
+.DS_Store
+EmailsDone/dist/
+Examples/dist/
+Examples/node_modules/
+Examples/package-lock.json
+EmailsDone/node_modules/
+*.tsbuildinfo

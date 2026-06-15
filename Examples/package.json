@@ -1,0 +1,14 @@
+{
+  "name": "@emailsdone/client-examples",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:library": "tsc -p ../tsconfig.json",
+    "build": "tsc -p tsconfig.json",
+    "start": "npm run build:library && npm run build && node dist/index.js"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "typescript": "^5.5.0"
+  }
+}

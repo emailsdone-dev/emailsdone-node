@@ -3,11 +3,8 @@ export interface EmailsDoneClientOptions {
   apiBaseUrl?: string;
 }
 
-export interface SendEmailResponse {
-  ok: boolean;
-  status?: string | null;
-  messageId?: string | null;
-  idempotent: boolean;
+export interface GetRecipientStatusOptions {
+  limit?: number | undefined;
 }
 
 export interface SendOptions {
@@ -24,15 +21,88 @@ export interface SendTemplatePayload extends SendOptions {
   data: Record<string, unknown>;
 }
 
-export type TemplateOptions = SendOptions & Record<string, unknown>;
+export interface TemplateOptions extends SendOptions {
+  [key: string]: unknown;
+}
+
+export interface SendEmailResponse {
+  idempotent: boolean;
+  messageId: string;
+  ok: boolean;
+  status: "accepted";
+}
+
+export interface GetQuotaQuotaEnvironment {
+  usedThisMonth: number;
+}
+
+export interface GetQuotaQuotaMonthly {
+  limit: number;
+  remaining: number;
+  status: string;
+  used: number;
+}
+
+export interface GetQuotaQuotaPeriod {
+  id: string;
+}
+
+export interface GetQuotaQuota {
+  accessStatus: string;
+  environment: GetQuotaQuotaEnvironment;
+  environmentId: string;
+  monthly: GetQuotaQuotaMonthly;
+  period: GetQuotaQuotaPeriod;
+  planId: string;
+  projectId: string;
+  sendingStatus: string;
+  tenantId: string;
+}
+
+export interface GetQuotaResponse {
+  ok: boolean;
+  quota: GetQuotaQuota;
+}
+
+export interface GetRecipientStatusRecipientDelivery {
+  complainedAt?: string;
+  complaintCount: number;
+  cooldownUntil?: string;
+  hardBounceCount: number;
+}
+
+export interface GetRecipientStatusRecipientSubscription {
+  resubscribedAt?: string;
+  scope?: string;
+  status: string;
+  unsubscribedAt?: string;
+}
+
+export interface GetRecipientStatusRecipient {
+  canSendNotifications: boolean;
+  delivery: GetRecipientStatusRecipientDelivery;
+  emailMasked: string;
+  recipientDomain: string;
+  state: string;
+  subscription: GetRecipientStatusRecipientSubscription;
+}
+
+export interface GetRecipientStatusResponse {
+  messages: Array<Record<string, unknown>>;
+  ok: boolean;
+  recipient: GetRecipientStatusRecipient;
+}
+
+export interface ResubscribeRecipientResponse {
+  ok: boolean;
+}
 
 export interface AccountLockedOptions extends SendOptions {
   actionButtonLabel?: string;
   actionButtonUrl?: string;
   heading?: string;
   intro?: string;
-  lockDetailsLockedAt?: string;
-  lockDetailsReason?: string;
+  lockDetails?: { lockedAt?: string; reason?: string };
   notice?: string;
   preheader?: string;
   subject?: string;
@@ -41,9 +111,7 @@ export interface AccountLockedOptions extends SendOptions {
 export interface EmailChangedOptions extends SendOptions {
   actionButtonLabel?: string;
   actionButtonUrl?: string;
-  changeDetailsChangedAt?: string;
-  changeDetailsNewEmail?: string;
-  changeDetailsOldEmail?: string;
+  changeDetails?: { changedAt?: string; newEmail?: string; oldEmail?: string };
   footerNote?: string;
   heading?: string;
   intro?: string;
@@ -52,7 +120,6 @@ export interface EmailChangedOptions extends SendOptions {
 }
 
 export interface LoginCodeOptions extends SendOptions {
-  code: string;
   footerNote?: string;
   heading?: string;
   intro?: string;
@@ -62,7 +129,6 @@ export interface LoginCodeOptions extends SendOptions {
 }
 
 export interface MagicLinkOptions extends SendOptions {
-  actionButtonUrl: string;
   actionButtonLabel?: string;
   footerNote?: string;
   heading?: string;
@@ -79,10 +145,7 @@ export interface MfaDisabledOptions extends SendOptions {
   intro?: string;
   notice?: string;
   preheader?: string;
-  securityDetailsCountry?: string;
-  securityDetailsDevice?: string;
-  securityDetailsDisabledAt?: string;
-  securityDetailsIp?: string;
+  securityDetails?: { country?: string; device?: string; disabledAt?: string; ip?: string };
   subject?: string;
 }
 
@@ -94,9 +157,7 @@ export interface MfaEnabledOptions extends SendOptions {
   intro?: string;
   notice?: string;
   preheader?: string;
-  securityDetailsDevice?: string;
-  securityDetailsEnabledAt?: string;
-  securityDetailsMethod?: string;
+  securityDetails?: { device?: string; enabledAt?: string; method?: string };
   subject?: string;
 }
 
@@ -106,10 +167,7 @@ export interface NewDeviceLoginOptions extends SendOptions {
   footerNote?: string;
   heading?: string;
   intro?: string;
-  loginDetailsCountry?: string;
-  loginDetailsDevice?: string;
-  loginDetailsIp?: string;
-  loginDetailsSignedInAt?: string;
+  loginDetails?: { country?: string; device?: string; ip?: string; signedInAt?: string };
   preheader?: string;
   subject?: string;
 }
@@ -117,10 +175,7 @@ export interface NewDeviceLoginOptions extends SendOptions {
 export interface PasswordChangedOptions extends SendOptions {
   actionButtonLabel?: string;
   actionButtonUrl?: string;
-  changeDetailsChangedAt?: string;
-  changeDetailsCountry?: string;
-  changeDetailsDevice?: string;
-  changeDetailsIp?: string;
+  changeDetails?: { changedAt?: string; country?: string; device?: string; ip?: string };
   footerNote?: string;
   heading?: string;
   intro?: string;
@@ -129,16 +184,12 @@ export interface PasswordChangedOptions extends SendOptions {
 }
 
 export interface PasswordResetOptions extends SendOptions {
-  actionButtonUrl: string;
   actionButtonLabel?: string;
   footerNote?: string;
   heading?: string;
   intro?: string;
   preheader?: string;
-  requestDetailsCountry?: string;
-  requestDetailsDevice?: string;
-  requestDetailsIp?: string;
-  requestDetailsRequestedAt?: string;
+  requestDetails?: { country?: string; device?: string; ip?: string; requestedAt?: string };
   securityNote?: string;
   subject?: string;
 }
@@ -148,17 +199,13 @@ export interface SuspiciousLoginOptions extends SendOptions {
   actionButtonUrl?: string;
   heading?: string;
   intro?: string;
-  loginDetailsAttemptedAt?: string;
-  loginDetailsCountry?: string;
-  loginDetailsDevice?: string;
-  loginDetailsIp?: string;
+  loginDetails?: { attemptedAt?: string; country?: string; device?: string; ip?: string };
   notice?: string;
   preheader?: string;
   subject?: string;
 }
 
 export interface VerifyEmailOptions extends SendOptions {
-  actionButtonUrl: string;
   actionButtonLabel?: string;
   footerNote?: string;
   heading?: string;
@@ -169,34 +216,9 @@ export interface VerifyEmailOptions extends SendOptions {
 }
 
 export interface WelcomeOptions extends SendOptions {
-  actionButtonUrl: string;
   actionButtonLabel?: string;
   callToActionHeading?: string;
   callToActionParagraph?: string;
-  heading?: string;
-  intro?: string;
-  preheader?: string;
-  subject?: string;
-}
-
-export interface CreditsExhaustedOptions extends SendOptions {
-  actionButtonUrl: string;
-  actionButtonLabel?: string;
-  creditDetailsPeriodEndsAt?: string;
-  creditDetailsRemaining?: number;
-  creditDetailsUsed?: number;
-  heading?: string;
-  intro?: string;
-  preheader?: string;
-  subject?: string;
-}
-
-export interface CreditsLowOptions extends SendOptions {
-  actionButtonLabel?: string;
-  actionButtonUrl?: string;
-  creditDetailsPeriodEndsAt?: string;
-  creditDetailsRemaining?: number;
-  creditDetailsThreshold?: number;
   heading?: string;
   intro?: string;
   preheader?: string;
@@ -219,10 +241,7 @@ export interface InvoiceOverdueOptions extends SendOptions {
   actionButtonLabel?: string;
   heading?: string;
   intro?: string;
-  invoiceDetailsAmount?: string;
-  invoiceDetailsDaysOverdue?: number;
-  invoiceDetailsDueDate?: string;
-  invoiceDetailsInvoiceNumber?: string;
+  invoiceDetails?: { amount?: string; daysOverdue?: number; dueDate?: string; invoiceNumber?: string };
   preheader?: string;
   subject?: string;
 }
@@ -234,10 +253,7 @@ export interface PaymentFailedOptions extends SendOptions {
   footerNote?: string;
   heading?: string;
   intro?: string;
-  paymentDetailsAmount?: string;
-  paymentDetailsDueDate?: string;
-  paymentDetailsPaymentMethod?: string;
-  paymentDetailsReason?: string;
+  paymentDetails?: { amount?: string; dueDate?: string; paymentMethod?: string; reason?: string };
   preheader?: string;
   subject?: string;
 }
@@ -247,10 +263,7 @@ export interface PaymentSucceededOptions extends SendOptions {
   actionButtonUrl?: string;
   heading?: string;
   intro?: string;
-  paymentDetailsAmount?: string;
-  paymentDetailsPaidAt?: string;
-  paymentDetailsPaymentMethod?: string;
-  paymentDetailsReference?: string;
+  paymentDetails?: { amount?: string; paidAt?: string; paymentMethod?: string; reference?: string };
   preheader?: string;
   subject?: string;
 }
@@ -260,10 +273,7 @@ export interface RefundIssuedOptions extends SendOptions {
   heading?: string;
   intro?: string;
   preheader?: string;
-  refundDetailsAmount?: string;
-  refundDetailsIssuedAt?: string;
-  refundDetailsPaymentMethod?: string;
-  refundDetailsReference?: string;
+  refundDetails?: { amount?: string; issuedAt?: string; paymentMethod?: string; reference?: string };
   subject?: string;
 }
 
@@ -274,9 +284,7 @@ export interface SubscriptionCancelledOptions extends SendOptions {
   intro?: string;
   preheader?: string;
   subject?: string;
-  subscriptionDetailsAccessEndsAt?: string;
-  subscriptionDetailsCancelledAt?: string;
-  subscriptionDetailsPlan?: string;
+  subscriptionDetails?: { accessEndsAt?: string; cancelledAt?: string; plan?: string };
 }
 
 export interface SubscriptionPausedOptions extends SendOptions {
@@ -286,9 +294,7 @@ export interface SubscriptionPausedOptions extends SendOptions {
   intro?: string;
   preheader?: string;
   subject?: string;
-  subscriptionDetailsPausedAt?: string;
-  subscriptionDetailsPlan?: string;
-  subscriptionDetailsResumesAt?: string;
+  subscriptionDetails?: { pausedAt?: string; plan?: string; resumesAt?: string };
 }
 
 export interface SubscriptionRenewedOptions extends SendOptions {
@@ -298,10 +304,7 @@ export interface SubscriptionRenewedOptions extends SendOptions {
   intro?: string;
   preheader?: string;
   subject?: string;
-  subscriptionDetailsAmount?: string;
-  subscriptionDetailsNextRenewalAt?: string;
-  subscriptionDetailsPlan?: string;
-  subscriptionDetailsRenewedAt?: string;
+  subscriptionDetails?: { amount?: string; nextRenewalAt?: string; plan?: string; renewedAt?: string };
 }
 
 export interface SubscriptionStartedOptions extends SendOptions {
@@ -311,10 +314,7 @@ export interface SubscriptionStartedOptions extends SendOptions {
   intro?: string;
   preheader?: string;
   subject?: string;
-  subscriptionDetailsAmount?: string;
-  subscriptionDetailsPlan?: string;
-  subscriptionDetailsRenewsAt?: string;
-  subscriptionDetailsStartedAt?: string;
+  subscriptionDetails?: { amount?: string; plan?: string; renewsAt?: string; startedAt?: string };
 }
 
 export interface TrialEndingOptions extends SendOptions {
@@ -335,9 +335,7 @@ export interface TrialStartedOptions extends SendOptions {
   intro?: string;
   preheader?: string;
   subject?: string;
-  trialDetailsEndsAt?: string;
-  trialDetailsPlan?: string;
-  trialDetailsStartedAt?: string;
+  trialDetails?: { endsAt?: string; plan?: string; startedAt?: string };
 }
 
 export interface UsageThresholdOptions extends SendOptions {
@@ -347,19 +345,13 @@ export interface UsageThresholdOptions extends SendOptions {
   heading?: string;
   preheader?: string;
   subject?: string;
-  usageDetailsLimit?: number;
-  usageDetailsPercentage?: number;
-  usageDetailsPeriodEndsAt?: string;
-  usageDetailsUsed?: number;
+  usageDetails?: { limit?: number; percentage?: number; periodEndsAt?: string; used?: number };
 }
 
 export interface ApiKeyCreatedOptions extends SendOptions {
   actionButtonLabel?: string;
   actionButtonUrl?: string;
-  apiKeyDetailsCreatedAt?: string;
-  apiKeyDetailsCreatedBy?: string;
-  apiKeyDetailsEnvironment?: string;
-  apiKeyDetailsName?: string;
+  apiKeyDetails?: { createdAt?: string; createdBy?: string; environment?: string; name?: string };
   heading?: string;
   intro?: string;
   notice?: string;
@@ -370,120 +362,67 @@ export interface ApiKeyCreatedOptions extends SendOptions {
 export interface ApiKeyRotatedOptions extends SendOptions {
   actionButtonLabel?: string;
   actionButtonUrl?: string;
-  apiKeyDetailsEnvironment?: string;
-  apiKeyDetailsName?: string;
-  apiKeyDetailsRotatedAt?: string;
-  apiKeyDetailsRotatedBy?: string;
+  apiKeyDetails?: { environment?: string; name?: string; rotatedAt?: string; rotatedBy?: string };
   heading?: string;
   intro?: string;
   preheader?: string;
   subject?: string;
 }
 
-export interface ExportReadyOptions extends SendOptions {
+export interface CreditsExhaustedOptions extends SendOptions {
   actionButtonUrl: string;
   actionButtonLabel?: string;
-  exportDetailsCreatedAt?: string;
-  exportDetailsExpiresAt?: string;
-  exportDetailsFormat?: string;
-  exportDetailsSize?: string;
+  creditDetails?: { periodEndsAt?: string; remaining?: number; used?: number };
   heading?: string;
   intro?: string;
   preheader?: string;
   subject?: string;
 }
 
-export interface GenerationCompleteOptions extends SendOptions {
-  actionButtonUrl: string;
+export interface CreditsLowOptions extends SendOptions {
   actionButtonLabel?: string;
-  generationDetailsCompletedAt?: string;
-  generationDetailsReference?: string;
-  generationDetailsType?: string;
+  actionButtonUrl?: string;
+  creditDetails?: { periodEndsAt?: string; remaining?: number; threshold?: number };
   heading?: string;
   intro?: string;
   preheader?: string;
   subject?: string;
-}
-
-export interface ImportCompleteOptions extends SendOptions {
-  actionButtonLabel?: string;
-  actionButtonUrl?: string;
-  heading?: string;
-  importDetailsCompletedAt?: string;
-  importDetailsFileName?: string;
-  importDetailsRecordsImported?: number;
-  importDetailsRecordsSkipped?: number;
-  message?: string;
-  preheader?: string;
-  subject?: string;
-}
-
-export interface JobCompleteOptions extends SendOptions {
-  actionButtonLabel?: string;
-  actionButtonUrl?: string;
-  heading?: string;
-  jobDetailsCompletedAt?: string;
-  jobDetailsDuration?: string;
-  jobDetailsJobName?: string;
-  jobDetailsReference?: string;
-  message?: string;
-  preheader?: string;
-  subject?: string;
-}
-
-export interface ProcessingFailedOptions extends SendOptions {
-  actionButtonLabel?: string;
-  actionButtonUrl?: string;
-  heading?: string;
-  message?: string;
-  preheader?: string;
-  processingDetailsFailedAt?: string;
-  processingDetailsItem?: string;
-  processingDetailsReason?: string;
-  processingDetailsReference?: string;
-  subject?: string;
-}
-
-export interface QueuedRequestReadyOptions extends SendOptions {
-  actionButtonUrl: string;
-  actionButtonLabel?: string;
-  heading?: string;
-  intro?: string;
-  preheader?: string;
-  requestDetailsCompletedAt?: string;
-  requestDetailsReference?: string;
-  requestDetailsRequestedAt?: string;
-  subject?: string;
-}
-
-export interface ReportReadyOptions extends SendOptions {
-  actionButtonUrl: string;
-  actionButtonLabel?: string;
-  heading?: string;
-  intro?: string;
-  preheader?: string;
-  reportDetailsCreatedAt?: string;
-  reportDetailsName?: string;
-  reportDetailsPeriod?: string;
-  subject?: string;
-}
-
-export interface UploadCompleteOptions extends SendOptions {
-  actionButtonLabel?: string;
-  actionButtonUrl?: string;
-  heading?: string;
-  message?: string;
-  preheader?: string;
-  subject?: string;
-  uploadDetailsFileName?: string;
-  uploadDetailsSize?: string;
-  uploadDetailsUploadedAt?: string;
 }
 
 export interface AnnouncementOptions extends SendOptions {
   message: string;
   actionButtonLabel?: string;
   actionButtonUrl?: string;
+  heading?: string;
+  preheader?: string;
+  subject?: string;
+}
+
+export interface ApprovalApprovedOptions extends SendOptions {
+  message: string;
+  actionButtonLabel?: string;
+  actionButtonUrl?: string;
+  approvalDetails?: { approvedAt?: string; approvedBy?: string; item?: string };
+  heading?: string;
+  preheader?: string;
+  subject?: string;
+}
+
+export interface ApprovalNeededOptions extends SendOptions {
+  actionButtonUrl: string;
+  actionButtonLabel?: string;
+  approvalDetails?: { item?: string; requestedAt?: string; requestedBy?: string };
+  heading?: string;
+  message?: string;
+  preheader?: string;
+  subject?: string;
+}
+
+export interface ApprovalRejectedOptions extends SendOptions {
+  message: string;
+  actionButtonLabel?: string;
+  actionButtonUrl?: string;
+  approvalDetails?: { item?: string; reason?: string; reviewedAt?: string; reviewedBy?: string };
   heading?: string;
   preheader?: string;
   subject?: string;
@@ -502,13 +441,51 @@ export interface DigestOptions extends SendOptions {
   summaryUpdates?: number;
 }
 
+export interface ExportReadyOptions extends SendOptions {
+  actionButtonUrl: string;
+  actionButtonLabel?: string;
+  exportDetails?: { createdAt?: string; expiresAt?: string; format?: string; size?: string };
+  heading?: string;
+  intro?: string;
+  preheader?: string;
+  subject?: string;
+}
+
+export interface GenerationCompleteOptions extends SendOptions {
+  actionButtonUrl: string;
+  actionButtonLabel?: string;
+  generationDetails?: { completedAt?: string; reference?: string; "type"?: string };
+  heading?: string;
+  intro?: string;
+  preheader?: string;
+  subject?: string;
+}
+
+export interface ImportCompleteOptions extends SendOptions {
+  actionButtonLabel?: string;
+  actionButtonUrl?: string;
+  heading?: string;
+  importDetails?: { completedAt?: string; fileName?: string; recordsImported?: number; recordsSkipped?: number };
+  message?: string;
+  preheader?: string;
+  subject?: string;
+}
+
+export interface JobCompleteOptions extends SendOptions {
+  actionButtonLabel?: string;
+  actionButtonUrl?: string;
+  heading?: string;
+  jobDetails?: { completedAt?: string; duration?: string; jobName?: string; reference?: string };
+  message?: string;
+  preheader?: string;
+  subject?: string;
+}
+
 export interface NotificationAlertOptions extends SendOptions {
   message: string;
   actionButtonLabel?: string;
   actionButtonUrl?: string;
-  alertDetailsSeverity?: string;
-  alertDetailsSource?: string;
-  alertDetailsTime?: string;
+  alertDetails?: { severity?: string; source?: string; time?: string };
   heading?: string;
   preheader?: string;
   subject?: string;
@@ -541,52 +518,54 @@ export interface NotificationWarningOptions extends SendOptions {
   subject?: string;
 }
 
+export interface ProcessingFailedOptions extends SendOptions {
+  actionButtonLabel?: string;
+  actionButtonUrl?: string;
+  heading?: string;
+  message?: string;
+  preheader?: string;
+  processingDetails?: { failedAt?: string; item?: string; reason?: string; reference?: string };
+  subject?: string;
+}
+
+export interface QueuedRequestReadyOptions extends SendOptions {
+  actionButtonUrl: string;
+  actionButtonLabel?: string;
+  heading?: string;
+  intro?: string;
+  preheader?: string;
+  requestDetails?: { completedAt?: string; reference?: string; requestedAt?: string };
+  subject?: string;
+}
+
 export interface ReminderOptions extends SendOptions {
   message: string;
   actionButtonLabel?: string;
   actionButtonUrl?: string;
   heading?: string;
   preheader?: string;
-  reminderDetailsDueAt?: string;
-  reminderDetailsReference?: string;
+  reminderDetails?: { dueAt?: string; reference?: string };
   subject?: string;
 }
 
-export interface ApprovalApprovedOptions extends SendOptions {
-  message: string;
-  actionButtonLabel?: string;
-  actionButtonUrl?: string;
-  approvalDetailsApprovedAt?: string;
-  approvalDetailsApprovedBy?: string;
-  approvalDetailsItem?: string;
-  heading?: string;
-  preheader?: string;
-  subject?: string;
-}
-
-export interface ApprovalNeededOptions extends SendOptions {
+export interface ReportReadyOptions extends SendOptions {
   actionButtonUrl: string;
   actionButtonLabel?: string;
-  approvalDetailsItem?: string;
-  approvalDetailsRequestedAt?: string;
-  approvalDetailsRequestedBy?: string;
+  heading?: string;
+  intro?: string;
+  preheader?: string;
+  reportDetails?: { createdAt?: string; name?: string; period?: string };
+  subject?: string;
+}
+
+export interface UploadCompleteOptions extends SendOptions {
+  actionButtonLabel?: string;
+  actionButtonUrl?: string;
   heading?: string;
   message?: string;
   preheader?: string;
   subject?: string;
-}
-
-export interface ApprovalRejectedOptions extends SendOptions {
-  message: string;
-  actionButtonLabel?: string;
-  actionButtonUrl?: string;
-  approvalDetailsItem?: string;
-  approvalDetailsReason?: string;
-  approvalDetailsReviewedAt?: string;
-  approvalDetailsReviewedBy?: string;
-  heading?: string;
-  preheader?: string;
-  subject?: string;
+  uploadDetails?: { fileName?: string; size?: string; uploadedAt?: string };
 }
 
 export interface InvitationAcceptedOptions extends SendOptions {
@@ -594,10 +573,7 @@ export interface InvitationAcceptedOptions extends SendOptions {
   actionButtonUrl?: string;
   heading?: string;
   intro?: string;
-  inviteDetailsAcceptedAt?: string;
-  inviteDetailsAcceptedBy?: string;
-  inviteDetailsRole?: string;
-  inviteDetailsWorkspace?: string;
+  inviteDetails?: { acceptedAt?: string; acceptedBy?: string; role?: string; workspace?: string };
   preheader?: string;
   subject?: string;
 }
@@ -607,10 +583,7 @@ export interface InvitedToWorkspaceOptions extends SendOptions {
   actionButtonLabel?: string;
   heading?: string;
   intro?: string;
-  inviteDetailsExpiresAt?: string;
-  inviteDetailsInvitedBy?: string;
-  inviteDetailsRole?: string;
-  inviteDetailsWorkspace?: string;
+  inviteDetails?: { expiresAt?: string; invitedBy?: string; role?: string; workspace?: string };
   preheader?: string;
   subject?: string;
 }
@@ -621,10 +594,7 @@ export interface RoleChangedOptions extends SendOptions {
   heading?: string;
   intro?: string;
   preheader?: string;
-  roleDetailsChangedAt?: string;
-  roleDetailsMember?: string;
-  roleDetailsNewRole?: string;
-  roleDetailsPreviousRole?: string;
+  roleDetails?: { changedAt?: string; member?: string; newRole?: string; previousRole?: string };
   subject?: string;
 }
 
@@ -633,10 +603,7 @@ export interface TeamMemberAddedOptions extends SendOptions {
   actionButtonUrl?: string;
   heading?: string;
   intro?: string;
-  memberDetailsAddedAt?: string;
-  memberDetailsEmail?: string;
-  memberDetailsName?: string;
-  memberDetailsRole?: string;
+  memberDetails?: { addedAt?: string; email?: string; name?: string; role?: string };
   preheader?: string;
   subject?: string;
 }
@@ -646,9 +613,7 @@ export interface TeamMemberRemovedOptions extends SendOptions {
   actionButtonUrl?: string;
   heading?: string;
   intro?: string;
-  memberDetailsEmail?: string;
-  memberDetailsName?: string;
-  memberDetailsRemovedAt?: string;
+  memberDetails?: { email?: string; name?: string; removedAt?: string };
   preheader?: string;
   subject?: string;
 }

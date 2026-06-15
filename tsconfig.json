@@ -10,14 +10,14 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "outDir": "dist",
-    "rootDir": "src",
+    "outDir": "EmailsDone/dist",
+    "rootDir": "EmailsDone/src",
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
     "skipLibCheck": true
   },
   "include": [
-    "src/**/*.ts"
+    "EmailsDone/src/**/*.ts"
   ]
 }

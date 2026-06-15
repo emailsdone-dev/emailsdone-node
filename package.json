@@ -1,19 +1,20 @@
 {
-  "name": "@emailsdone/client",
-  "version": "0.1.0",
+  "name": "emailsdone",
+  "version": "0.1.10",
   "description": "Template-first transactional email SDK for EmailsDone.",
   "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./EmailsDone/dist/index.js",
+  "types": "./EmailsDone/dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "types": "./EmailsDone/dist/index.d.ts",
+      "import": "./EmailsDone/dist/index.js"
     }
   },
   "files": [
-    "dist",
-    "README.md"
+    "EmailsDone/dist",
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json"
