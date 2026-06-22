@@ -99,6 +99,101 @@ export interface ResubscribeRecipientResponse {
   ok: boolean;
 }
 
+export interface ContactRecord {
+  contactId: string;
+  email: string;
+  name?: string | null;
+  status?: "active" | "archived";
+  groupSlugs?: string[];
+  projectIds?: string[];
+  environmentIds?: string[];
+  customFields?: Record<string, unknown>;
+  [key: string]: unknown;
+}
+
+export interface ContactGroupRecord {
+  groupId: string;
+  slug: string;
+  name: string;
+  contactCount: number;
+  [key: string]: unknown;
+}
+
+export interface ContactUpsertRequest {
+  email: string;
+  name?: string | null;
+  status?: "active" | "archived";
+  groupSlugs?: string[];
+  projectIds?: string[];
+  environmentIds?: string[];
+  projectEnvironmentKeys?: string[];
+  customFields?: Record<string, unknown>;
+}
+
+export interface ContactListRequest {
+  search?: string;
+  filters?: Array<Record<string, unknown>>;
+  cursorContactId?: string;
+  pageSize?: number;
+}
+
+export interface ContactListResponse {
+  ok: boolean;
+  contacts: ContactRecord[];
+  nextCursorContactId: string | null;
+  hasMore: boolean;
+}
+
+export interface ContactGetResponse {
+  ok: boolean;
+  contact: ContactRecord;
+}
+
+export interface ContactUpsertResponse {
+  ok: boolean;
+  contact: ContactRecord;
+}
+
+export interface ContactGroupsListResponse {
+  ok: boolean;
+  groups: ContactGroupRecord[];
+}
+
+export interface ContactGroupUpsertResponse {
+  ok: boolean;
+  group: ContactGroupRecord;
+}
+
+export interface ContactGroupMutationResponse {
+  ok: boolean;
+  updated?: number;
+}
+
+export interface ContactSendRequest {
+  projectId: string;
+  environmentId: string;
+  templateId: string;
+  templateVersion?: string;
+  templateData: Record<string, unknown>;
+  contactIds?: string[];
+  groupSlug?: string;
+  contactFieldMappings?: Record<string, string>;
+}
+
+export interface ContactDryRunResponse {
+  ok: boolean;
+  total: number;
+  eligible: number;
+  skipped: Record<string, number>;
+  recipients: Array<Record<string, unknown>>;
+}
+
+export interface ContactSendResponse extends ContactDryRunResponse {
+  jobId: string;
+  queued: number;
+  messageIds: string[];
+}
+
 export interface AccountLockedOptions extends SendOptions {
   actionButtonLabel?: string;
   actionButtonUrl?: string;

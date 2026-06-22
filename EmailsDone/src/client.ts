@@ -13,6 +13,17 @@ import type {
   GetRecipientStatusOptions,
   GetRecipientStatusResponse,
   SendOptions,
+  ContactDryRunResponse,
+  ContactGetResponse,
+  ContactGroupMutationResponse,
+  ContactGroupsListResponse,
+  ContactGroupUpsertResponse,
+  ContactListRequest,
+  ContactListResponse,
+  ContactSendRequest,
+  ContactSendResponse,
+  ContactUpsertRequest,
+  ContactUpsertResponse,
   ResubscribeRecipientResponse,
   SendEmailResponse,
   SendTemplatePayload,
@@ -24,6 +35,7 @@ export class EmailsDone {
   private readonly developerTemplates: DeveloperTemplates;
   private readonly notificationsTemplates: NotificationsTemplates;
   private readonly teamTemplates: TeamTemplates;
+  private readonly contactsClient: ContactsClient;
   private readonly apiKey: string;
   private readonly apiBaseUrl: string;
 
@@ -39,6 +51,7 @@ export class EmailsDone {
     this.developerTemplates = new DeveloperTemplates(this);
     this.notificationsTemplates = new NotificationsTemplates(this);
     this.teamTemplates = new TeamTemplates(this);
+    this.contactsClient = new ContactsClient(this);
   }
 
   static fromApiKey(apiKey: string, options: Omit<EmailsDoneOptions, "apiKey"> = {}): EmailsDone {
@@ -69,6 +82,10 @@ export class EmailsDone {
   recipient(email: string): RecipientClient {
     requireRecipientEmail(email);
     return new RecipientClient(this, email);
+  }
+
+  contacts(): ContactsClient {
+    return this.contactsClient;
   }
 
   async getQuota(): Promise<GetQuotaResponse> {
@@ -118,6 +135,15 @@ export class EmailsDone {
     return this.requestJson<SendEmailResponse>("POST", "/v1/send", body, headers);
   }
 
+  internalRequestJson<TResponse>(
+    method: "GET" | "POST",
+    path: string,
+    body?: Record<string, unknown>,
+    extraHeaders: Record<string, string> = {},
+  ): Promise<TResponse> {
+    return this.requestJson<TResponse>(method, path, body, extraHeaders);
+  }
+
   private async requestJson<TResponse>(
     method: "GET" | "POST",
     path: string,
@@ -155,6 +181,75 @@ export class EmailsDone {
 
 export const EmailsDoneClient = EmailsDone;
 
+export class ContactsClient {
+  constructor(private readonly client: EmailsDone) {}
+
+  get(emailOrContactId: string): Promise<ContactGetResponse> {
+    requireNonBlank(emailOrContactId, "Contact email or id is required.");
+    return this.client.internalRequestJson<ContactGetResponse>("POST", "/v1/contacts/get", { emailOrContactId });
+  }
+
+  upsert(contact: ContactUpsertRequest): Promise<ContactUpsertResponse> {
+    requireRecipientEmail(contact.email);
+    return this.client.internalRequestJson<ContactUpsertResponse>("POST", "/v1/contacts/upsert", { ...contact });
+  }
+
+  list(request: ContactListRequest = {}): Promise<ContactListResponse> {
+    return this.client.internalRequestJson<ContactListResponse>("POST", "/v1/contacts/list", { ...request });
+  }
+
+  groups(slug?: string): ContactGroupsClient | ContactGroupClient {
+    return slug ? new ContactGroupClient(this.client, slug) : new ContactGroupsClient(this.client);
+  }
+
+  dryRun(request: ContactSendRequest): Promise<ContactDryRunResponse> {
+    return this.client.internalRequestJson<ContactDryRunResponse>("POST", "/v1/contacts/send/dry-run", { ...request });
+  }
+
+  sendTemplate(request: ContactSendRequest): Promise<ContactSendResponse> {
+    return this.client.internalRequestJson<ContactSendResponse>("POST", "/v1/contacts/send", { ...request });
+  }
+}
+
+export class ContactGroupsClient {
+  constructor(private readonly client: EmailsDone) {}
+
+  list(): Promise<ContactGroupsListResponse> {
+    return this.client.internalRequestJson<ContactGroupsListResponse>("POST", "/v1/contacts/groups/list", {});
+  }
+
+  upsert(name: string, slug?: string): Promise<ContactGroupUpsertResponse> {
+    return this.client.internalRequestJson<ContactGroupUpsertResponse>("POST", "/v1/contacts/groups/upsert", { name, ...(slug ? { slug } : {}) });
+  }
+}
+
+export class ContactGroupClient {
+  constructor(
+    private readonly client: EmailsDone,
+    private readonly slug: string,
+  ) {}
+
+  sendTemplate(request: Omit<ContactSendRequest, "groupSlug" | "contactIds">): Promise<ContactSendResponse> {
+    return this.client.internalRequestJson<ContactSendResponse>("POST", "/v1/contacts/send", { ...request, groupSlug: this.slug });
+  }
+
+  dryRun(request: Omit<ContactSendRequest, "groupSlug" | "contactIds">): Promise<ContactDryRunResponse> {
+    return this.client.internalRequestJson<ContactDryRunResponse>("POST", "/v1/contacts/send/dry-run", { ...request, groupSlug: this.slug });
+  }
+
+  add(contactIds: string[]): Promise<ContactGroupMutationResponse> {
+    return this.client.internalRequestJson<ContactGroupMutationResponse>("POST", "/v1/contacts/groups/add", { groupSlug: this.slug, contactIds });
+  }
+
+  remove(contactIds: string[]): Promise<ContactGroupMutationResponse> {
+    return this.client.internalRequestJson<ContactGroupMutationResponse>("POST", "/v1/contacts/groups/remove", { groupSlug: this.slug, contactIds });
+  }
+
+  delete(): Promise<ContactGroupMutationResponse> {
+    return this.client.internalRequestJson<ContactGroupMutationResponse>("POST", "/v1/contacts/groups/delete", { groupSlug: this.slug });
+  }
+}
+
 function addIfSet(target: Record<string, unknown>, key: string, value: string | undefined): void {
   if (value?.trim()) {
     target[key] = value;
@@ -177,6 +272,12 @@ function requestHeadersWithIdempotency(options: SendOptions): Record<string, str
 function requireRecipientEmail(email: string): void {
   if (!email || !email.trim()) {
     throw new Error("Recipient email address is required.");
+  }
+}
+
+function requireNonBlank(value: string, message: string): void {
+  if (!value || !value.trim()) {
+    throw new Error(message);
   }
 }
 
